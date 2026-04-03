@@ -8,7 +8,7 @@ const Login = ({navigation}) => {
   let[password,setpassword]=useState("");
 
 
-  let API_URL = "http://10.194.58.118:3000/users/login";
+  let API_URL = "http://172.16.73.118:3000/users/login";
   let  login = async ()=>{
     if(email.trim() == "" || password.trim() == ""){
       alert("Fill the details");
@@ -74,7 +74,7 @@ let styles = StyleSheet.create({
   container:{flex:1,backgroundColor:"#0febb7cf"},
   box:{flex:1,padding:10},
   box2:{flex:1.7,backgroundColor:"#000",borderTopLeftRadius:20,borderTopRightRadius:20,paddingHorizontal:40,paddingVertical:100,flexDirection : "center"},
-  input:{borderWidth:0.3,color:"white",borderColor:"white",margin:10,borderRadius:6}
+  input:{borderWidth:1,color:"white",borderColor:"#444",margin:10,borderRadius:6}
 })
 
 export default Login

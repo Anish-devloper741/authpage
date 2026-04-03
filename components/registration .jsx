@@ -1,6 +1,6 @@
 import { 
   View, Text, ImageBackground, StyleSheet, 
-  TextInput, TouchableOpacity 
+  TextInput, TouchableOpacity, ActivityIndicator
 } from 'react-native';
 
 import React, { useState } from 'react';
@@ -9,20 +9,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
+const Registration = ({ navigation }) => {
 
- const Registration = ({navigation}) => {
-
-  let [cheked, setcheked] = useState(false);
+  let [checked, setChecked] = useState(false);
   let [showpassword, setshowpassword] = useState(true);
+  let [loading, setloading] = useState(false);
 
   let [name, setname] = useState("");
   let [email, setemail] = useState("");
   let [password, setpassword] = useState("");
   let [number, setnumber] = useState("");
 
-  let API_URL = "http://10.194.58.118:3000/users/register";
-
- 
+  let API_URL = "http://172.16.73.118:3000/users/register";
 
   let register = async () => {
 
@@ -32,24 +30,41 @@ import axios from 'axios';
     }
 
     try {
-      await axios.post(API_URL, {
+      setloading(true);
+
+      let res = await axios.post(API_URL, {
         FullName: name,
         Email: email,
         Password: password,
         PhoneNumber: number
+      }, {
+        timeout: 5000
       });
-      
 
-      alert("Registration Successful");
-      navigation.replace("Login");
-      setname("");
-      setemail("");
-      setpassword("");
-      setnumber("");
+      if (res.status === 200 || res.status === 201) {
+        alert("Registration Successful");
+
+        setname("");
+        setemail("");
+        setpassword("");
+        setnumber("");
+
+        navigation.replace("Login");
+      }
 
     } catch (err) {
-      console.log(err);
-      alert("Error in registration");
+      console.log("ERROR:", err?.response || err.message);
+
+      if (err.code === "ECONNABORTED") {
+        alert("Server taking too long. Try again.");
+      } else if (err.response) {
+        alert(err.response.data?.message || "Server error");
+      } else {
+        alert("Network error");
+      }
+
+    } finally {
+      setloading(false);
     }
   };
 
@@ -76,7 +91,7 @@ import axios from 'axios';
         </SafeAreaView>
       </ImageBackground>
 
-      {/* Bottom Form */}
+      {/* Form */}
       <View style={styles.formContainer}>
 
         <TextInput
@@ -93,6 +108,7 @@ import axios from 'axios';
           style={styles.input}
           placeholder='Enter Your Email'
           placeholderTextColor={"#ccc"}
+          keyboardType="email-address"
         />
 
         {/* Password */}
@@ -106,7 +122,6 @@ import axios from 'axios';
             placeholderTextColor={"#ccc"}
           />
 
-          {/* Eye Icon */}
           <TouchableOpacity
             onPress={() => setshowpassword(!showpassword)}
             style={styles.eyeIcon}
@@ -121,18 +136,17 @@ import axios from 'axios';
 
         {/* Checkbox */}
         <View style={styles.checkboxContainer}>
-
           <TouchableOpacity
             onPress={() => {
-              setcheked(!cheked);
-              setshowpassword(!showpassword);
+              setChecked(!checked);
+              setshowpassword(!checked); // FIXED LOGIC
             }}
             style={[
               styles.checkbox,
-              cheked && styles.checkboxActive
+              checked && styles.checkboxActive
             ]}
           >
-            {cheked && (
+            {checked && (
               <Ionicons name="checkmark" size={16} color="#fff" />
             )}
           </TouchableOpacity>
@@ -150,22 +164,30 @@ import axios from 'axios';
         />
 
         {/* Button */}
-        <TouchableOpacity onPress={register} style={{ margin: 10 }}>
+        <TouchableOpacity 
+          onPress={register} 
+          disabled={loading} 
+          style={{ margin: 10 }}
+        >
           <LinearGradient
             colors={['#4F2EE8', '#3B82F6']}
             style={styles.button}
           >
-            <Text style={{ color: '#fff', fontSize: 16 }}>
-              Register
-            </Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={{ color: '#fff', fontSize: 16 }}>
+                Register
+              </Text>
+            )}
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Login Link */}
+        {/* Login */}
         <View style={styles.bottomText}>
           <Text style={{ color: "#fff" }}>I have account?</Text>
 
-          <TouchableOpacity onPress={()=>navigation.navigate("Login")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
             <Text style={styles.loginText}> Login</Text>
           </TouchableOpacity>
         </View>
@@ -174,7 +196,6 @@ import axios from 'axios';
     </View>
   );
 };
-
 
 export default Registration;
 
