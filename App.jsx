@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Navigation from "./navigation";
-import DrawerNavigator from "./components/drawerNavigation";
+import Navigation from "./src/navigations/stackNavigation";
+import DrawerNavigator from "./src/navigations/drawerNavigation";
+import { View } from "react-native";
+
 
 const App = () => {
 
@@ -27,9 +29,13 @@ const App = () => {
   }
 
   return (
+    
     <NavigationContainer>
+      
       {isLoggedIn ? <DrawerNavigator /> : <Navigation />}
+      
     </NavigationContainer>
+   
   );
 };
 

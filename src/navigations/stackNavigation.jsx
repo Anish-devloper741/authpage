@@ -1,17 +1,18 @@
 import { StatusBar } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Registration from "./components/registration ";
-import Login from "./components/login";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Home from "./components/home";
-import DrawerNavigator from "./components/drawerNavigation";
+import Registration from "../auth/registration ";
+import Login from "../auth/login";
+import {SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import DrawerNavigator from "./drawerNavigation";
 
 let Stack = createStackNavigator();
 
 const Navigation = () => {
   return (
+
     <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
       <Stack.Navigator>
+        
         <Stack.Screen
           options={{ headerShown: false }}
           name="Register"
@@ -19,7 +20,7 @@ const Navigation = () => {
         />
         <Stack.Screen
           options={{ headerShown: false }}
-          name="Login"
+          name="SignIn"
           component={Login}
         />
         <Stack.Screen
@@ -27,8 +28,11 @@ const Navigation = () => {
           name="MainScreen"
           component={DrawerNavigator}
         />
+      
       </Stack.Navigator>
     </SafeAreaView>
+ 
+    
   );
 };
 
